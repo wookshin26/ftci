@@ -22,8 +22,9 @@ resulting figures.
 | `inspect_jls.jl` | Prints the content of the serialized result files |
 
 Inside an experiment folder, `code/` holds notebooks and scripts, `results/`
-the data, `figures/` the figure files and `logs/` the run configuration where
-one was written.
+the data and `logs/` the run configuration where one was written. `figures/`
+holds each figure as it appears in the manuscript (PDF) and, for two
+experiments, the individual panels as the code wrote them (SVG).
 
 ## Figures, code and data
 
