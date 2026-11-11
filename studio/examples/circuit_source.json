@@ -1,0 +1,14 @@
+{
+  "n_qubits": 2,
+  "gates": [
+    {"gate": "h", "qubits": [0]},
+    {"gate": "h", "qubits": [1]},
+    {"gate": "ry", "qubits": [0], "angle": "x0"},
+    {"gate": "rz", "qubits": [1], "angle": "2*x0**2+x1"},
+    {"gate": "cx", "qubits": [0, 1]},
+    {"gate": "rx", "qubits": [0], "angle": "x0+x1"},
+    {"gate": "ry", "qubits": [1], "angle": "0.7"}
+  ],
+  "domain": [[-3.141592653589793, 3.141592653589793], [-3.141592653589793, 3.141592653589793]],
+  "observable": "ZZ"
+}

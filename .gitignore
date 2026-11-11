@@ -1,0 +1,11 @@
+.DS_Store
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+.ftci_jobs/
+*.ftci
+studio/ftci/julia/Manifest.toml

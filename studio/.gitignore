@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.ftci_jobs/
+*.ftci
+ftci/julia/Manifest.toml

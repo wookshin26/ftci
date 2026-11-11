@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ee">
+  <meta name="description" content="Learn a reusable tensor-network representation of a function with function tensor cross interpolation.">
+  <title>FTCI Studio — Functions in tensor form</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="circuit-editor.css">
+  <script defer src="circuit-editor.js"></script>
+  <script defer src="circuit-source.js"></script>
+  <script defer src="formula.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="FTCI Studio home"><span class="brand-symbol" aria-hidden="true"><i></i><i></i><i></i></span>FTCI<span>Studio</span></a>
+    <div class="engine-state" id="engine-state"><span class="status-dot"></span><span id="engine-label">Connecting to engine</span></div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <h1 id="page-title">Function tensor cross interpolation</h1>
+      <math class="model-formula" aria-label="The learned function equals the coefficient tensor contracted with the tensor product of local dictionaries">
+        <mover><mi>f</mi><mo>̂</mo></mover><mo>(</mo><mi>x</mi><mo>)</mo>
+        <mo>=</mo><mi>C</mi><mo>⋅</mo><munder><mo>⨂</mo><mi>k</mi></munder>
+        <msup><mi>Φ</mi><mrow><mo>(</mo><mi>k</mi><mo>)</mo></mrow></msup><mo>(</mo><mi>x</mi><mo>)</mo>
+      </math>
+    </section>
+
+    <div class="workspace">
+      <aside class="setup-panel" aria-label="Function and learning settings">
+        <form id="learning-form">
+          <section id="problem-definition" aria-labelledby="problem-title">
+          <h2 class="section-label" id="problem-title"><span>01</span> Define the problem</h2>
+          <div class="mode-switch" role="group" aria-label="Problem type">
+            <button type="button" class="mode-button active" data-mode="function" aria-pressed="true">General function</button>
+            <button type="button" class="mode-button" data-mode="quantum" aria-pressed="false">Quantum circuit</button>
+          </div>
+          <label for="example-select">Start with an example</label>
+          <div class="select-wrap"><select id="example-select"><option>Loading examples…</option></select></div>
+          <p class="example-description" id="example-description"></p>
+
+          <label for="model-name">Model name</label>
+          <input id="model-name" type="text" value="My function" maxlength="100" autocomplete="off" required>
+
+          <div id="function-settings">
+            <label for="target-expression">Target function <span class="optional">f(x)</span></label>
+            <textarea id="target-expression" class="expression-input target-input" rows="2" spellcheck="false" title="Inputs: x0, x1, … · Powers: **">1 + cos(x0) * cos(x1)</textarea>
+          </div>
+
+          <div id="quantum-settings" hidden>
+            <div class="circuit-source-heading">
+              <label for="circuit-json">Circuit source code</label>
+              <div class="circuit-source-actions">
+                <div class="circuit-format-control">
+                  <label for="circuit-format">Language</label>
+                  <select id="circuit-format"><option value="json">JSON</option><option value="python">Python (auto)</option></select>
+                </div>
+                <div class="circuit-upload-control">
+                  <button type="button" class="secondary-button" id="upload-circuit-button" title="JSON or Python (.py)">Upload code</button>
+                  <input id="circuit-file" type="file" accept=".json,.py,application/json,text/x-python" aria-label="Upload quantum circuit code file" hidden>
+                </div>
+              </div>
+            </div>
+            <p class="circuit-file-name" id="circuit-file-name" role="status" hidden></p>
+            <textarea id="circuit-json" class="expression-input circuit-source-input" rows="12" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="circuit-source-status"></textarea>
+            <div id="circuit-source-status" class="circuit-source-status" role="status" aria-live="polite"></div>
+            <div id="circuit-source-error" class="error-message circuit-source-error" role="alert" hidden></div>
+            <details id="circuit-visual-aid" class="circuit-visual-aid">
+              <summary>Circuit diagram</summary>
+              <section id="quantum-editor" hidden aria-label="Quantum circuit editor"></section>
+            </details>
+          </div>
+
+          <div class="label-with-action"><label>Input domain</label><button type="button" class="text-button" id="add-input">+ Input</button></div>
+          <div id="domain-inputs" class="domain-inputs"></div>
+
+          </section>
+
+          <section id="representation-settings" class="basis-settings" aria-labelledby="representation-title">
+            <h2 class="section-label" id="representation-title"><span>02</span> Representation</h2>
+            <div id="basis-settings">
+              <div id="basis-editors"></div>
+              <button type="button" class="add-basis" id="add-basis">+ Add a dictionary</button>
+            </div>
+            <div id="quantum-representation" class="quantum-representation" hidden>
+              <div class="mode-switch representation-switch" role="group" aria-label="How encoding gates are grouped into dictionaries">
+                <button type="button" class="mode-button representation-button active" data-representation="canonical" aria-pressed="true">Canonical</button>
+                <button type="button" class="mode-button representation-button" data-representation="merged" aria-pressed="false">Merged by preprocessing</button>
+                <button type="button" class="mode-button representation-button" data-representation="custom" aria-pressed="false">Custom</button>
+              </div>
+              <p class="representation-note" id="representation-note"></p>
+              <dl class="representation-summary" id="representation-summary"></dl>
+              <div class="site-table-container" id="representation-sites"></div>
+            </div>
+          </section>
+
+          <div class="training-settings">
+            <div class="section-label"><span>03</span> Learning</div>
+            <h3 class="subsection-label">Sampling grid</h3>
+            <div class="field-pair">
+              <div><label for="oversampling">Oversampling</label><input id="oversampling" type="number" min="1" max="10" step="1" value="2" title="Auxiliary inputs per dictionary function" required></div>
+              <div><label for="node-rule">Nodes</label><div class="select-wrap"><select id="node-rule"><option value="auto">Automatic</option><option value="equispaced">Equispaced</option><option value="random">Random</option></select></div></div>
+              <div id="shots-field" hidden><label for="shots">Shots per query</label><input id="shots" type="number" min="1" max="1000000000000" step="1" placeholder="Exact" title="Leave empty for exact queries"></div>
+            </div>
+            <p class="design-readout" id="design-readout" role="status" aria-live="polite"></p>
+            <h3 class="subsection-label">Compression</h3>
+            <div class="field-pair">
+              <div><label for="max-bond">Maximum bond</label><input id="max-bond" type="number" min="1" max="64" step="1" value="16" required></div>
+              <div><label for="query-budget">Query budget</label><input id="query-budget" type="number" min="1" max="100000" step="1" value="20000" title="Training + validation + preview" required></div>
+            </div>
+            <details class="advanced-settings">
+              <summary>Advanced settings</summary>
+              <div class="field-pair">
+                <div><label for="tolerance">TCI tolerance</label><input id="tolerance" type="number" min="0.000000000000001" max="1" step="any" value="0.00000001"></div>
+                <div><label for="validation-samples">Validation points</label><input id="validation-samples" type="number" min="1" max="1000" step="1" value="100"></div>
+                <div><label for="seed">Random seed</label><input id="seed" type="number" min="0" step="1" value="7"></div>
+              </div>
+            </details>
+          </div>
+          <div class="training-settings sweep-settings">
+            <h3 class="subsection-label">Sweep</h3>
+            <div class="field-pair">
+              <div><label for="sweep-axis">Vary one setting</label><div class="select-wrap"><select id="sweep-axis"><option value="">Nothing · single run</option><option value="max_bond">Maximum bond</option><option value="oversampling">Oversampling</option><option value="shots" data-quantum>Shots per query</option><option value="representation" data-quantum>Representation</option></select></div></div>
+              <div id="sweep-values-field" hidden><label for="sweep-values">Values</label><input id="sweep-values" type="text" autocomplete="off" spellcheck="false" aria-describedby="sweep-note"></div>
+            </div>
+            <p class="design-readout" id="sweep-note"></p>
+          </div>
+          <div id="form-error" class="error-message" role="alert" hidden></div>
+          <button type="submit" class="primary-button" id="learn-button"><span>Learn function</span></button>
+        </form>
+      </aside>
+
+      <section class="results-panel" aria-label="Learned function and results">
+        <div class="result-card">
+          <div class="result-card-heading">
+            <h2 id="result-title">Results</h2>
+            <a class="download-button" id="download-button" hidden><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2v10m-4-4 4 4 4-4M3 13v4h14v-4" stroke="currentColor" stroke-width="1.5"/></svg>Export model</a>
+          </div>
+          <div class="run-status" id="run-status" aria-live="polite">
+            <div class="run-status-copy"><span class="run-icon" id="run-icon" aria-hidden="true">○</span><div><strong id="run-title">Ready to learn</strong><p id="run-message" hidden></p></div></div>
+            <button type="button" class="secondary-button compact" id="cancel-button" hidden>Stop learning</button>
+          </div>
+
+          <div class="result-tabs" role="tablist" aria-label="Result views">
+            <button type="button" id="tab-prediction" role="tab" aria-selected="true" aria-controls="panel-prediction" tabindex="0" data-tab="prediction">Prediction</button>
+            <button type="button" id="tab-tensors" role="tab" aria-selected="false" aria-controls="panel-tensors" tabindex="-1" data-tab="tensors">Tensor network</button>
+            <button type="button" id="tab-details" role="tab" aria-selected="false" aria-controls="panel-details" tabindex="-1" data-tab="details">Diagnostics</button>
+            <button type="button" id="tab-runs" role="tab" aria-selected="false" aria-controls="panel-runs" tabindex="-1" data-tab="runs">Runs</button>
+          </div>
+
+          <div id="panel-prediction" role="tabpanel" aria-labelledby="tab-prediction">
+            <div class="slice-controls" id="slice-controls" hidden>
+              <div class="slice-field"><label for="slice-x">Horizontal axis</label><div class="select-wrap"><select id="slice-x"></select></div></div>
+              <div class="slice-field"><label for="slice-y">Second axis</label><div class="select-wrap"><select id="slice-y"></select></div></div>
+              <div class="slice-fixed" id="slice-fixed" role="group" aria-label="Values of the inputs held fixed"></div>
+              <label class="slice-target" for="slice-target"><input type="checkbox" id="slice-target" checked><span id="slice-target-label">Compare with the target</span></label>
+            </div>
+            <div class="chart-heading"><span id="chart-caption">Function preview</span><div class="chart-legend" id="chart-legend" hidden><span><i class="legend-target"></i>Target</span><span><i class="legend-prediction"></i>Learned</span></div></div>
+            <div id="chart-container" class="chart-container">
+              <div class="empty-state" id="chart-empty"><h3>No model yet</h3></div>
+            </div>
+            <p class="chart-note" id="chart-note"></p>
+            <div class="metrics" aria-label="Validation results">
+              <div><span>Relative L² error</span><strong id="metric-error">—</strong><small id="metric-validation">Independent validation</small></div>
+              <div><span>Oracle queries</span><strong id="metric-queries">—</strong><small>Training evaluations</small></div>
+              <div><span>Bond dimensions</span><strong id="metric-bonds">—</strong><small>Coefficient MPS</small></div>
+            </div>
+            <form class="predict-section" id="predict-form">
+              <div class="predict-header"><h3>Try a new input</h3></div>
+              <div class="predict-controls"><div id="predict-inputs" class="predict-inputs"></div><button type="submit" class="secondary-button" id="predict-button" disabled>Evaluate</button></div>
+              <div class="prediction-output" id="prediction-output" aria-live="polite"><span>f̂(x)</span><strong id="prediction-value">—</strong></div>
+              <div id="prediction-error" class="error-message" role="alert" hidden></div>
+              <div id="basis-values" class="basis-values" hidden></div>
+            </form>
+          </div>
+
+          <div id="panel-tensors" role="tabpanel" aria-labelledby="tab-tensors" hidden>
+            <div class="view-control">
+              <label for="basis-view">Coefficient basis</label>
+              <div class="select-wrap"><select id="basis-view" disabled><option value="dictionary">Dictionary (as learned)</option><option value="orthonormal">Orthonormal</option><option value="nodal">Sampling grid (nodal)</option></select></div>
+              <p class="field-help" id="basis-view-note" role="status" aria-live="polite">The same function can be read in other bases of each dictionary's function space. Bond dimensions and predictions do not change.</p>
+            </div>
+            <div id="tensor-network" class="tensor-network" role="group" aria-label="Coefficient MPS cores and function dictionaries" tabindex="0"><p class="muted">No model yet</p></div>
+            <div id="core-inspector" class="core-inspector" role="region" aria-labelledby="core-title" hidden>
+              <div class="inspector-heading"><h3 id="core-title" aria-live="polite">Coefficient core</h3><span class="shape-tag" id="core-shape"></span></div>
+              <div id="coefficient-inspector">
+                <div class="core-slice-control"><label for="basis-index-select">Basis function index</label><select id="basis-index-select"></select><span id="core-basis-expression" class="core-basis-expression basis-formula" aria-label="Selected basis function" aria-live="polite" hidden></span><span class="muted" id="core-index-note">Rows: left bond · columns: right bond</span></div>
+                <div id="core-table-container" class="core-table-container"></div>
+                <p class="field-help" id="core-table-note"></p>
+              </div>
+              <div id="dictionary-inspector" hidden>
+                <dl id="dictionary-facts" class="dictionary-facts"></dl>
+                <div id="dictionary-functions" class="dictionary-functions"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="panel-details" role="tabpanel" aria-labelledby="tab-details" hidden>
+            <div class="details-content">
+              <section id="error-budget" class="diagnostic-section" aria-labelledby="error-budget-title" hidden>
+                <h3 id="error-budget-title">Error budget</h3>
+                <div id="budget-cards" class="budget-cards"></div>
+                <ul id="budget-notes" class="budget-notes"></ul>
+              </section>
+              <section id="coefficient-structure" class="diagnostic-section" aria-labelledby="coefficient-structure-title" hidden>
+                <h3 id="coefficient-structure-title">Coefficient tensor</h3>
+                <p class="field-help" id="structure-basis"></p>
+                <div id="structure-content"></div>
+              </section>
+              <section class="diagnostic-section" aria-labelledby="model-facts-title">
+                <h3 id="model-facts-title">Model</h3>
+                <dl id="model-facts" class="model-facts"><div><dt>Status</dt><dd>No model yet</dd></div></dl>
+                <details id="metadata-details" hidden><summary>Full learning metadata</summary><pre id="model-metadata"></pre></details>
+              </section>
+            </div>
+          </div>
+
+          <div id="panel-runs" role="tabpanel" aria-labelledby="tab-runs" hidden>
+            <div class="details-content"><div id="sweep-charts" class="sweep-charts" hidden></div><div id="runs-container" class="runs-container"><p class="muted">No runs yet</p></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer>FTCI Studio · Research preview</footer>
+  </main>
+</body>
+</html>

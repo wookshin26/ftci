@@ -1,0 +1,8 @@
+run_id=20260611_124951
+quick_mode=false
+N=9
+K=3
+chi_max=24
+N_list=[9, 10, 11, 12, 13, 14, 15, 16]
+grid=200
+timestamp=2026-06-11T12:49:51.042

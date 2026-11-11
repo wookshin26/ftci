@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "function-tci-studio"
+version = "0.1.0"
+description = "Portable tensor-network functions learned with function tensor cross interpolation"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+quantum = ["qiskit>=2.0,<3"]
+
+[project.scripts]
+ftci-studio = "ftci.server:main"
+
+[tool.setuptools.packages.find]
+include = ["ftci*"]
+
+[tool.setuptools.package-data]
+ftci = ["web/*", "julia/*"]

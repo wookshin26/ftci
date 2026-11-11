@@ -1,0 +1,89 @@
+cff-version: 1.2.0
+message: >-
+  If you use this code or data, please cite the article given under
+  preferred-citation, and the libraries listed under references that your
+  work relies on.
+type: software
+repository-code: "https://github.com/wookshin26/ftci"
+title: "Code and data for 'Learning quantum functions using tensor cross interpolation'"
+authors:
+  - family-names: Shin
+    given-names: Seongwook
+  - family-names: Sweke
+    given-names: Ryan
+  - family-names: Eisert
+    given-names: Jens
+preferred-citation:
+  type: unpublished
+  title: "Learning quantum functions using tensor cross interpolation"
+  authors:
+    - family-names: Shin
+      given-names: Seongwook
+    - family-names: Sweke
+      given-names: Ryan
+    - family-names: Eisert
+      given-names: Jens
+references:
+  - type: article
+    title: "Learning tensor networks with tensor cross interpolation: New algorithms and libraries"
+    authors:
+      - family-names: Núñez Fernández
+        given-names: Yuriel
+      - family-names: Ritter
+        given-names: Marc K.
+      - family-names: Jeannin
+        given-names: Matthieu
+      - family-names: Li
+        given-names: Jheng-Wei
+      - family-names: Kloss
+        given-names: Thomas
+      - family-names: Louvet
+        given-names: Thibaud
+      - family-names: Terasaki
+        given-names: Satoshi
+      - family-names: Parcollet
+        given-names: Olivier
+      - family-names: Delft
+        name-particle: von
+        given-names: Jan
+      - family-names: Shinaoka
+        given-names: Hiroshi
+      - family-names: Waintal
+        given-names: Xavier
+    journal: "SciPost Physics"
+    volume: 18
+    start: 104
+    year: 2025
+    doi: 10.21468/SciPostPhys.18.3.104
+    notes: "TensorCrossInterpolation.jl, used for all tensor cross interpolation runs."
+  - type: article
+    title: "Yao.jl: Extensible, Efficient Framework for Quantum Algorithm Design"
+    authors:
+      - family-names: Luo
+        given-names: Xiu-Zhe
+      - family-names: Liu
+        given-names: Jin-Guo
+      - family-names: Zhang
+        given-names: Pan
+      - family-names: Wang
+        given-names: Lei
+    journal: "Quantum"
+    volume: 4
+    start: 341
+    year: 2020
+    doi: 10.22331/q-2020-10-11-341
+    notes: "Yao.jl, used for statevector simulation of the circuits."
+  - type: article
+    title: "The ITensor Software Library for Tensor Network Calculations"
+    authors:
+      - family-names: Fishman
+        given-names: Matthew
+      - family-names: White
+        given-names: Steven R.
+      - family-names: Stoudenmire
+        given-names: E. Miles
+    journal: "SciPost Physics Codebases"
+    start: 4
+    year: 2022
+    doi: 10.21468/SciPostPhysCodeb.4
+    notes: "ITensors.jl and ITensorMPS.jl, used for matrix-product-state simulation."
