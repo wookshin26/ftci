@@ -52,6 +52,15 @@ Notes on individual experiments:
   CSV files are transcribed from the output stored in the notebook. The
   number of queries is recorded as mean and standard deviation per size, the
   errors per circuit.
+- **04, angle convention.** The manuscript writes the input rotation as
+  exp(−i n̂ x_k) with n̂ = (X + Y + Z)/√3. The code builds it with Yao's
+  `rot(n, θ)`, which is exp(−i n̂ θ/2). The manuscript's input is therefore
+  half the angle used in the code, θ_k = 2 x_k, and the manuscript's
+  dictionary (1, cos 2x_k, sin 2x_k) is the code's (1, cos θ_k, sin θ_k). The
+  grid {0, 2π/3, 4π/3} is the same set of circuits in both conventions,
+  because angles are defined up to a full turn. Only the labels of two points
+  swap: the code reads out Z, Y, X at θ = 0, 2π/3, 4π/3, the manuscript Z, X,
+  Y at x = 0, 2π/3, 4π/3. The results do not depend on the convention.
 - The notebooks also contain exploratory cells that are not used in the
   manuscript. Their data files are not included.
 
