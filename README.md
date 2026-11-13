@@ -79,3 +79,8 @@ and how to run the experiments again.
 See [`CITATION.cff`](CITATION.cff). The experiments rely on
 TensorCrossInterpolation.jl, Yao.jl and ITensors.jl. Please cite them as well
 if you build on this code.
+
+## License
+
+The code, data and figure files in this repository are released under the
+Apache License, Version 2.0. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).

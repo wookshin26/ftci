@@ -4,6 +4,7 @@ message: >-
   preferred-citation, and the libraries listed under references that your
   work relies on.
 type: software
+license: Apache-2.0
 repository-code: "https://github.com/wookshin26/ftci"
 title: "Code and data for 'Learning quantum functions using tensor cross interpolation'"
 authors:

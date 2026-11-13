@@ -455,3 +455,8 @@ Tests exercise actual Julia TCI recovery, original-input validation after
 quantum angle lifting, arbitrary dictionaries, budget/cancellation paths,
 Qiskit imports when installed, malformed inputs, model round trips, and an
 isolated subprocess using the bundled predictor without FTCI or Julia.
+
+## License
+
+FTCI Studio is released under the Apache License, Version 2.0. See `LICENSE`
+and `NOTICE`.
