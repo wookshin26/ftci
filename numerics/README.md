@@ -136,3 +136,10 @@ manuscript if you build on this code.
 - [ITensors.jl](https://github.com/ITensor/ITensors.jl) and ITensorMPS.jl for
   matrix-product-state simulation: M. Fishman, S. R. White and
   E. M. Stoudenmire, SciPost Phys. Codebases 4 (2022).
+
+## License
+
+The code in this directory (notebooks, scripts and modules) is released under
+the Apache License, Version 2.0. The stored results in the `results/` folders
+and the figure files in the `figures/` folders are not covered by the Apache
+License.

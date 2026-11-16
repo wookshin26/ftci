@@ -82,5 +82,7 @@ if you build on this code.
 
 ## License
 
-The code, data and figure files in this repository are released under the
-Apache License, Version 2.0. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
+The code in this repository (FTCI Studio and the notebooks, scripts and
+modules in `numerics/`) is released under the Apache License, Version 2.0.
+See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE). The stored results and the
+figure files in `numerics/` are not covered by the Apache License.
